@@ -102,9 +102,9 @@ void calculate_statistics(statistics_t * stat,uint32_t operand_a,uint32_t operan
  * @param [in] operand_a The operand a for the MAC operation
  * @param [in] operand_b The operand b for the MAC operation
  * @param [in] result The result of the MAC operation
- * @result he new element or NULL in case of error
+ * @result the new element or NULL in case of error
  */
-listNode_t* list_get_new_element(uint32_t operand_a,uint32_t operand_b,uint64_t result);
+listNode_t* list_get_new_element(uint32_t operand_a,uint32_t operand_b,uint64_t result); //Übergabe der Werte in Liste (Klammer)
 
 /**
  * @brief free a list Node this returns the memory to the os
@@ -283,4 +283,93 @@ void calculate_statistics(statistics_t * stat,uint32_t operand_a,uint32_t operan
 		stat->avg_operand_a = stat->sum_operand_a/stat->counter;
 		stat->avg_operand_b = stat->sum_operand_b/stat->counter;
 	}
+}
+
+listNode_t* list_get_new_element(uint32_t operand_a,uint32_t operand_b,uint64_t result)
+{
+	listNode_t *temp = NULL;
+	temp = (listNode_t*) malloc(sizeof(listNode_t)); //Anforderung von Speicher
+	if ( NULL != temp )
+	{
+	temp->operand_a = operand_a;
+	temp->operand_b = operand_b;
+	temp->result = result;
+	temp->pNext = NULL;
+	temp->pPrev = NULL;
+	}
+	return temp;
+}
+
+void list_free_element(listNode_t* elem) //Da nicht unendlich Speicher auf dem BS frei ist, muss wer wieder freigeben werden
+{
+	if(NULL != elem) //Überprüfung mit NULL, ob man auf Speicher zugreifen darf
+	{
+		free((void*)elem);
+		elem = NULL;
+	}
+}
+
+int list_insert_before(doubleLinkedList_t *list , listNode_t* old ,listNode_t* elem)
+{	
+	if(NULL != old && NULL != elem)
+	{
+		if(elem == list->headOfList) //Anfang
+		{
+			elem->pPrev = NULL;
+			elem->pNext = old;
+			old->pPrev = elem;
+			list->headOfList = old;
+		}
+		else
+		{
+			listNode_t *temp = NULL;
+			elem->pNext = old;
+			elem->pPrev = old->pPrev;
+			old->pPrev = elem;
+			old->pPrev->pNext = elem;
+		}
+	}
+
+}
+
+int list_insert_after(doubleLinkedList_t *list , listNode_t* old ,listNode_t* elem)
+{
+	if(elem == list->tailOfList) //Ende
+	{
+		elem->pPrev = old;
+		elem->pNext = NULL;
+		elem->pPrev = old;
+		list->tailOfList = elem;
+	}
+	else
+	{
+        listNode_t *temp = NULL;
+		elem->pNext = old;
+		elem->pPrev = old->pPrev;
+		old->pPrev = elem;
+		old->pPrev->pNext = elem;
+	}
+}
+
+int list_push_front(doubleLinkedList_t *list , listNode_t* elem)
+{
+	if(NULL != elem)
+	{
+		elem->pNext = list->headOfList;
+		elem->pPrev = NULL;
+		list->headOfList->pPrev = elem;
+		list->headOfList = elem;
+	}
+}
+
+int list_push_back(doubleLinkedList_t *list, listNode_t* elem)
+{
+	if(NULL != elem)
+	{
+		elem->pNext= NULL;
+		elem->pNext = list->tailOfList;
+		list->tailOfList->pNext = elem;
+		list->tailOfList = elem;
+	}
+
 }
