@@ -415,10 +415,14 @@ int list_push_front(doubleLinkedList_t *list , listNode_t* elem)
 		// Fehler
 		return EXIT_FAILURE;
 	}
+
+	else
+	{
 	elem->pNext = list->headOfList;
 	elem->pPrev = NULL;
 	list->headOfList->pPrev = elem;
 	list->headOfList = elem;
+	}
 
 	return EXIT_SUCCESS;
 }
@@ -437,10 +441,13 @@ int list_push_back(doubleLinkedList_t *list, listNode_t* elem)
 		// Fehler
 		return EXIT_FAILURE;
 	}
+	else
+	{
 	elem->pPrev = list->tailOfList;
 	elem->pNext = NULL;
 	list->tailOfList->pNext = elem;
 	list->tailOfList = elem;
+	}
 
 	return EXIT_SUCCESS;
 }
@@ -458,12 +465,14 @@ listNode_t* list_get_new_element(uint32_t operand_a,uint32_t operand_b,uint64_t 
 		printf("error allocating memory!");
 	}
 #endif
+	else
+	{
 	pHelp->operand_a = operand_a;
 	pHelp->operand_b = operand_b;
 	pHelp->result = result;
 	pHelp->pNext = NULL;
 	pHelp->pPrev = NULL;
-
+	}
 	return pHelp;
 }
 
